@@ -1,0 +1,16 @@
+[submodule "WizardLM"]
+	path = WizardLM
+	url = https://github.com/nlpxucan/WizardLM.git
+	branch = main
+[submodule "transformers"]
+	path = transformers
+	url = https://github.com/huggingface/transformers.git
+[submodule "llama.cpp-q2q3"]
+	path = llama.cpp-q2q3
+	url = https://github.com/player1537-forks/llama.cpp.git
+[submodule "llama.cpp-pr867"]
+	path = llama.cpp-pr867
+	url = https://github.com/player1537-forks/llama.cpp.git
+[submodule "llama.cpp-master"]
+	path = llama.cpp-master
+	url = https://github.com/player1537-forks/llama.cpp.git
