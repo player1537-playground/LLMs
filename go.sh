@@ -251,12 +251,17 @@ go-Apply-Vicuna-Weight-Delta() {
 }
 
 go-Download-Bloom() {
-    : ${1:?need modelsize}
-    modelsize=${1,,}
-    MODELSIZE=${1^^}
+    : ${1:?need modelname (e.g. bloom or bloomz)}
+    modelname=${1,,}
+    Modelname=${1^}
+    MODELNAME=${1^^}
 
-    url=https://huggingface.co/bigscience/bloom-${modelsize:?}
-    dstdir=${data:?}/Bloom/${MODELSIZE:?}
+    : ${2:?need modelsize}
+    modelsize=${2,,}
+    MODELSIZE=${2^^}
+
+    url=https://huggingface.co/bigscience/${modelname:?}-${modelsize:?}
+    dstdir=${data:?}/${Modelname:?}/${MODELSIZE:?}
 
     mkdir -p "${dstdir%/*}"
 
@@ -271,7 +276,7 @@ go-Convert-Bloom-Tokenizer() {
     modelsize=${1:?need modelsize}
 
     convert=${root:?}/llama.cpp-pr867/tokenconvert.py
-    tokenizertype=BPE
+    tokenizertype=SentencePiece
     modelpath=${data:?}/Bloom/${modelsize:?}
 
     exec python3.8 "${convert:?}" \
@@ -281,20 +286,70 @@ go-Convert-Bloom-Tokenizer() {
 }
 
 go-Convert-Bloom-Weights() {
-    modelsize=${1:?need modelsize}
+    modelname=${1:?need modelname}
+    _modelname=${modelname,,}
+    _Modelname=${modelname^}
+    _MODELNAME=${modelname^^}
+
+    modelsize=${2:?need modelsize}
     _modelsize=${modelsize,,}
     _MODELSIZE=${modelsize^^}
 
-    convert=${root:?}/llama.cpp-pr867/convert-hf-to-ggml-v2.py
-    modelname=${data:?}/Bloom/${modelsize:?}
-    outputdir=${data:?}/Bloom/${modelsize:?}
-    tokenizername=bigscience/bloom-${_modelsize:?}
+    convert=${root:?}/bloomz.cpp-main/convert-hf-to-ggml.py
+    modelname=${data:?}/${_Modelname:?}/${modelsize:?}
+    outputdir=${data:?}/${_Modelname:?}/${modelsize:?}
+    tokenizername=bigscience/${_modelname:?}-${_modelsize:?}
 
     exec python3.8 "${convert:?}" \
-        "${modelname:?}" \
-        "${outputdir:?}" \
+        --model-name "${modelname:?}" \
+        --output-dir "${outputdir:?}" \
         --tokenizer-name "${tokenizername:?}" \
         ##
+}
+
+go-Quantize-Bloom-Weights() {
+    : ${1:?need modelname (e.g. bloom or bloomz)}
+    modelname=${1,,}
+    Modelname=${1^}
+    MODELNAME=${1^^}
+
+    : ${2:?need modelsize}
+    modelsize=${2,,}
+    MODELSIZE=${2^^}
+
+    : ${3:?need quant name (e.g. q4_1 or q4_0)}
+    quantname=${3,,}
+
+    convert=${root:?}/bloomz.cpp-main/quantize
+    floatmodel=${data:?}/${Modelname:?}/${MODELSIZE:?}/ggml-model-f16.bin
+    quantmodel=${data:?}/${Modelname:?}/${MODELSIZE:?}/ggml-model-${quantname:?}.bin
+    case "${quantname:?}" in
+    (q4_0) quanttype=2;;
+    (q4_1) quanttype=3;;
+    esac
+
+    exec "${convert:?}" \
+        "${floatmodel:?}" \
+        "${quantmodel:?}" \
+        "${quanttype:?}" \
+        ##
+}
+
+go-Update-Bloom-Weights() {
+    modelsize=${1:?need modelsize}
+
+    # convert=${root:?}/llama.cpp-pr867/convert-unversioned-ggml-to-ggml.py
+    convert=${root:?}/llama.cpp-master/convert.py
+    model=${data:?}/Bloom/${modelsize:?}/ggml-model-${modelsize:?}-f16.bin
+    # tokenizer=${data:?}/Bloom/${modelsize:?}/tokenizer.model
+    outfile=${data:?}/Bloom/${modelsize:?}/ggml-model-f16.bin
+
+    exec python3.8 "${convert:?}" \
+        "${model:?}" \
+        --outfile "${outfile:?}" \
+        ##
+
+        # --vocab-dir "${tokenizer:?}"
 }
 
 go-Convert-Weights-to-GGML() {

@@ -14,3 +14,6 @@
 [submodule "llama.cpp-master"]
 	path = llama.cpp-master
 	url = https://github.com/player1537-forks/llama.cpp.git
+[submodule "bloomz.cpp-main"]
+	path = bloomz.cpp-main
+	url = https://github.com/player1537-forks/bloomz.cpp.git
