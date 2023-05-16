@@ -1,0 +1,18 @@
+[submodule "llama.cpp--q2q3"]
+	path = llama.cpp--q2q3
+	url = https://github.com/player1537-forks/llama.cpp
+[submodule "llama-cpp-python--main"]
+	path = llama-cpp-python--main
+	url = https://github.com/abetlen/llama-cpp-python.git
+[submodule "llama-cpp-python--v0.1.35"]
+	path = llama-cpp-python--v0.1.35
+	url = https://github.com/abetlen/llama-cpp-python.git
+[submodule "llama-cpp-python--v0.1.36"]
+	path = llama-cpp-python--v0.1.36
+	url = https://github.com/abetlen/llama-cpp-python.git
+[submodule "parserllm--main"]
+	path = parserllm--main
+	url = https://github.com/player1537-forks/parserllm.git
+[submodule "rellm--main"]
+	path = rellm--main
+	url = https://github.com/player1537-forks/rellm.git
